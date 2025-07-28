@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import passport from 'passport';
-import { userModel } from '../db';
+import { balanceModel, userModel } from '../db';
 
 
 const sign = express.Router();
@@ -18,9 +18,38 @@ sign.get('/google/auth',
             })
             return
         }
-        const existingUser = userModel.find({
+        const existingUser = await userModel.find({
             googleId : user.googleId
         })
+        try{
+
+            if(!existingUser){
+                const amount = 1 + Math.random() * 10000 
+                const createdUser = await userModel.create({
+                    googleId : user.googleId,
+                    firstName : user.firstName,
+                    lastName : user.lastName
+                })
+                
+                const createdBalance = await balanceModel.create({
+                    userId : createdUser.googleId,
+                    amount : amount
+                })
+                res.status(200).json({
+                    message : 'User Created Successfully'
+                })
+                return
+            }
+        }catch{
+            console.error;
+            res.status(500).json({
+                message : 'Internal Server Failed'
+            })
+            return
+        }
+         
+
+
 
     });
 

@@ -22,7 +22,7 @@ const userSchema = new Schema({
 })
 
 const balanceSchema = new Schema({
-    balanceId: { type: ObjectId, required: true, unique: true },
+    balanceId: { type: ObjectId, required: true, unique: true  },
     userId: { type: Number, required: true, unique: true, ref: 'userSchema' },
     amount: { type: Number }
 })
